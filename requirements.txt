@@ -1,0 +1,27 @@
+# Flask Web Framework
+Flask==3.1.2
+Jinja2==3.1.6
+Werkzeug==3.1.4
+MarkupSafe==3.0.3
+itsdangerous==2.2.0
+click==8.3.1
+blinker==1.9.0
+
+# Production WSGI Server
+gunicorn==23.0.0
+
+# PDF Processing
+pdf2image==1.17.0
+PyPDF2==3.0.1
+reportlab==4.4.6
+Pillow==12.0.0
+
+# OCR (Optical Character Recognition)
+pytesseract==0.3.13
+
+# Utility libraries
+packaging==25.0
+charset-normalizer==3.4.4
+
+# Windows compatibility (not needed on Render but won't hurt)
+colorama==0.4.6

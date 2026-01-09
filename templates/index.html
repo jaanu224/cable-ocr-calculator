@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cable Short-Circuit Calculator </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --brand-blue: #005DAA;
+        --primary-color: var(--brand-blue);
+        --secondary-color: #014F86;
+        --brand-blue: #005DAA;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --dark-bg: #0f172a;
+        --card-bg: #ffffff;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --border-color: #e2e8f0;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        padding: 2rem 0;
+      }
+
+      .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      /* Header Styling */
+      .app-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+        background: #ffffff;
+        padding-bottom: 1rem;
+        box-shadow: 0 1px 0 #e5e7eb;
+      }
+
+      .app-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: var(--brand-blue);
+      }
+
+      .app-header p {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+      }
+
+      /* Enhanced Card Styling */
+      .enhanced-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid #e9eef5;
+        margin-bottom: 2rem;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .enhanced-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      }
+
+      .card-header-custom {
+        background: #ffffff;
+        color: var(--brand-blue);
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border-bottom: 2px solid var(--brand-blue);
+      }
+
+
+
+      .card-header-custom h5 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--brand-blue);
+      }
+
+      .card-body-custom {
+        padding: 2rem;
+      }
+
+      /* Step Indicator */
+      .step-indicator {
+        display: inline-flex;
+        width: 36px;
+        height: 36px;
+        background: var(--brand-blue);
+        color: #ffffff;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.05rem;
+        box-shadow: var(--shadow-sm);
+      }
+
+      /* Form Controls Enhancement */
+      .form-label {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .form-control, .form-select {
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        background: #ffffff;
+      }
+
+      /* Special styling for rated voltage dropdown */
+      #ratedVoltageSelect {
+        position: relative !important;
+        z-index: 9999 !important;
+        background-color: #ffffff !important;
+        border: 2px solid var(--primary-color) !important;
+      }
+
+      #ratedVoltageSelect option {
+        background-color: #ffffff;
+        color: #333;
+        padding: 8px;
+      }
+
+      .form-control:focus, .form-select:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        outline: none;
+      }
+
+      /* Enhanced Buttons */
+      .btn-enhanced {
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-enhanced:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
+
+      .btn-primary-enhanced {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: #ffffff;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-success-enhanced {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #ffffff;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-outline-enhanced {
+        background: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .btn-outline-enhanced:hover {
+        background: var(--primary-color);
+        color: #ffffff;
+      }
+
+      /* File Upload Area */
+      .file-upload-area {
+        border: 3px dashed var(--border-color);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .file-upload-area:hover {
+        border-color: var(--primary-color);
+        background: #f1f5f9;
+        box-shadow: var(--shadow-md);
+      }
+
+
+
+      /* Results Box */
+      .results-box {
+        background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        border-left: 5px solid var(--success-color);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+      }
+
+      .results-box.error {
+        background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        border-left-color: var(--danger-color);
+      }
+
+      /* Status Badge */
+      .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        border: 1px solid #e5e7eb;
+      }
+
+      .status-success {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      .status-error {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .status-warning {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      /* Loading Spinner */
+      .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      /* Input Groups */
+      .input-group-enhanced {
+        position: relative;
+      }
+
+      .input-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+      }
+
+      .input-with-icon {
+        padding-left: 2.5rem;
+      }
+
+      /* Progress Bar */
+      .progress-bar-custom {
+        height: 8px;
+        background: #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        margin: 1rem 0;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+        transition: width 0.5s ease;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .app-header h1 {
+          font-size: 1.8rem;
+        }
+        
+        .card-body-custom {
+          padding: 1.5rem;
+        }
+      }
+
+      /* Hide default number input spinners */
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type="number"] {
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+
+      #resultBox {
+        display: none;
+        min-height: 100px;
+      }
+
+
+
+      #btnViewPdf {
+        display: none;
+      }
+
+
+      .brand-logo {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 1000;
+        background-color: #ffffff;
+        padding: 6px 8px;
+        border-radius: 6px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .brand-logo img {
+        height: 40px;
+        width: auto;
+        display: block;
+      }
+
+      @media (max-width: 768px) {
+        .brand-logo img {
+          height: 32px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="brand-logo">
+      <img src="{{ url_for('static', filename='balfour_beatty.png.png') }}" alt="Balfour Beatty" onerror="this.parentElement.style.display='none'" />
+    </div>
+    <div class="main-container">
+      <!-- Header -->
+      <div class="app-header">
+        <h1>Cable Short-Circuit Calculator</h1>
+      </div>
+
+      <!-- Step 1: PDF Upload -->
+      <div class="enhanced-card">
+        <div class="card-header-custom">
+          <span class="step-indicator">1</span>
+          <div>
+            <h5>Upload Cable Datasheet</h5>
+          </div>
+        </div>
+        <div class="card-body-custom">
+          <div class="file-upload-area">
+            <h6>Drag & Drop or Click to Upload PDF</h6>
+            <p class="text-muted small mb-3">Supports cable datasheet PDFs with OCR extraction</p>
+            <input
+              type="file"
+              id="pdfFile"
+              accept="application/pdf"
+              class="form-control"
+              style="max-width: 400px; margin: 0 auto;"
+            />
+          </div>
+
+          <div class="row g-3 mt-3">
+            <div class="col-md-4">
+              <button id="btnExtract" class="btn btn-primary-enhanced btn-enhanced w-100">
+                Extract From PDF
+              </button>
+            </div>
+
+            <div class="col-md-4">
+              <button id="btnViewPdf" class="btn btn-outline-enhanced btn-enhanced w-100">
+                View PDF
+              </button>
+            </div>
+
+            <div class="col-md-4">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Conductor Calculation -->
+      <div class="enhanced-card">
+        <div class="card-header-custom">
+          <span class="step-indicator">2</span>
+          <div>
+            <h5>Conductor Calculation</h5>
+          </div>
+        </div>
+        <div class="card-body-custom">
+          <form id="conductorForm">
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <label class="form-label">
+                  Voltage (kV)
+                </label>
+                <div class="input-group">
+                  <input
+                    type="number"
+                    id="voltageKv"
+                    class="form-control"
+                    placeholder="≤ 400"
+                    step="any"
+                  />
+                  <select
+                    id="ratedVoltageSelect"
+                    class="form-select"
+                    style="display: none; max-width: 100%; position: relative; z-index: 1000;"
+                  ></select>
+                </div>
+                <small
+                  id="ratedVoltageHelp"
+                  class="text-muted small"
+                  style="display: none;"
+                  >Select rated voltage from datasheet</small
+                >
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">
+                  Short Circuit Current I<sub>AD</sub> (kA)
+                </label>
+                <input
+                  type="number"
+                  id="sccKa"
+                  class="form-control"
+                  placeholder="kA"
+                  step="any"
+                />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">
+                  Time t (s)
+                </label>
+                <input
+                  type="number"
+                  id="timeSec"
+                  class="form-control"
+                  placeholder="≤ 10"
+                  step="any"
+                />
+              </div>
+
+              <div class="col-md-2">
+                <label class="form-label">
+                  Material
+                </label>
+                <select id="material" class="form-select">
+                  <option value="">Select</option>
+                  <option value="Copper">Copper</option>
+                  <option value="Aluminium">Aluminium</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <label class="form-label">K Value</label>
+                <input type="number" id="kValue" class="form-control" step="any" />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">β (K)</label>
+                <input type="number" id="beta" class="form-control" step="any" />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">θᵢ (°C)</label>
+                <input
+                  type="number"
+                  id="thetaInitial"
+                  class="form-control"
+                  value="90"
+                  readonly
+                />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">θf (°C)</label>
+                <input
+                  type="number"
+                  id="thetaFinal"
+                  class="form-control"
+                  value="250"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label">
+                  Given Conductor Area (mm²)
+                </label>
+                <input
+                  type="number"
+                  id="givenConductorArea"
+                  class="form-control"
+                  step="any"
+                  placeholder="Actual cable size"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">
+                  Calculation Mode
+                </label>
+                <div class="input-group">
+                  <select id="conductorMode" class="form-select">
+                    <option value="area-from-current">Calculate area from current</option>
+                    <option value="current-from-area">Calculate current from area</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-success-enhanced btn-enhanced">
+              Calculate Conductor
+            </button>
+            
+            <button type="button" id="btnDownloadConductor" class="btn btn-outline-enhanced btn-enhanced ms-3" style="display: none;">
+              Download Conductor Report
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Step 3: Sheath Calculation -->
+      <div class="enhanced-card">
+        <div class="card-header-custom">
+          <span class="step-indicator">3</span>
+          <div>
+            <h5>Sheath Calculation</h5>
+          </div>
+        </div>
+        <div class="card-body-custom">
+          <form id="sheathForm">
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <label class="form-label">
+                  Sheath Material
+                </label>
+                <select id="sheathMaterial" class="form-select">
+                  <option value="">Select</option>
+                  <option value="aluminium">Aluminium</option>
+                  <option value="lead">Lead</option>
+                  <option value="steel">Steel</option>
+                  <option value="bronze">Bronze</option>
+                </select>
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">
+                  Voltage (kV)
+                </label>
+                <input
+                  type="number"
+                  id="sheathVoltageKv"
+                  class="form-control"
+                  placeholder="≤ 400"
+                  step="any"
+                />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">
+                  Short Circuit Current (kA)
+                </label>
+                <input
+                  type="number"
+                  id="sheathSccKa"
+                  class="form-control"
+                  step="any"
+                />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">
+                  Time t (s)
+                </label>
+                <input
+                  type="number"
+                  id="sheathTimeSec"
+                  class="form-control"
+                  step="any"
+                />
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label">
+                  Insulation Material
+                </label>
+                <select id="insulationMaterial" class="form-select">
+                  <option value="">Select</option>
+                  <option value="XLPE" selected>XLPE</option>
+                  <option value="PE">PE</option>
+                  <option value="PVC">PVC</option>
+                  <option value="EPR">EPR</option>
+                  <option value="oil">oil</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">
+                  Outer Sheath Material
+                </label>
+                <select id="outerSheathMaterial" class="form-select">
+                  <option value="">Select</option>
+                  <option value="PVC">PVC</option>
+                  <option value="PE" selected>PE</option>
+                  <option value="compounded-jute">Compounded Jute</option>
+                  <option value="rubber-sandwich">Rubber Sandwich</option>
+                  <option value="polychloroprene">Polychloroprene</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-3">
+                <label class="form-label">
+                  Outer Diameter (mm)
+                </label>
+                <input
+                  type="number"
+                  id="sheathOuterD"
+                  class="form-control"
+                  step="any"
+                />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">
+                  Inner Diameter (mm)
+                </label>
+                <input
+                  type="number"
+                  id="sheathInnerD"
+                  class="form-control"
+                  step="any"
+                />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">
+                  Thickness δ (mm)
+                </label>
+                <input
+                  type="number"
+                  id="sheathThickness"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+
+              <div class="col-md-3">
+                <label class="form-label">
+                  Actual Sheath Area (mm²)
+                </label>
+                <input
+                  type="number"
+                  id="sheathAreaGiven"
+                  class="form-control"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label">θᵢ (°C)</label>
+                <input
+                  type="number"
+                  id="sheathThetaInitial"
+                  class="form-control"
+                  value="80"
+                />
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label">θf (°C)</label>
+                <input
+                  type="number"
+                  id="sheathThetaFinal"
+                  class="form-control"
+                  value="250"
+                  readonly
+                />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-success-enhanced btn-enhanced">
+              Calculate Sheath
+            </button>
+            
+            <button type="button" id="btnDownloadSheath" class="btn btn-outline-enhanced btn-enhanced ms-3" style="display: none;">
+              Download Sheath Report
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Results Box -->
+      <div id="resultBox" class="enhanced-card">
+        <div class="card-header-custom">
+          <h5>Calculation Results</h5>
+        </div>
+        <div class="card-body-custom">
+          <div id="resultText" class="results-box"></div>
+
+          <div class="mt-3">
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <script src="{{ url_for('static', filename='script_enhanced.js') }}?v={{ range(1, 10000) | random }}"></script>></script>
+  </body>
+</html>
